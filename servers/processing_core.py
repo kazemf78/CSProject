@@ -1,6 +1,6 @@
-from clock import Clock
-from dynamic_object import DynamicObject
-from task import Task
+from time.clock import Clock
+from time.dynamic_object import DynamicObject
+from task.task import Task
 
 
 class ProcessingCore(DynamicObject):

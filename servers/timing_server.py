@@ -1,4 +1,4 @@
-from dynamic_object import DynamicObject
+from time.dynamic_object import DynamicObject
 
 
 class TimingServer(DynamicObject):

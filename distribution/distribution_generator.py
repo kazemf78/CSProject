@@ -1,4 +1,4 @@
-from distribution_enum import DistributionEnum
+from distribution.distribution_enum import DistributionEnum
 
 
 class DistributionGenerator:

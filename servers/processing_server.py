@@ -1,5 +1,5 @@
-from dynamic_object import DynamicObject
-from processing_core import ProcessingCore
+from time.dynamic_object import DynamicObject
+from servers.processing_core import ProcessingCore
 
 
 class ProcessingServer(DynamicObject):
