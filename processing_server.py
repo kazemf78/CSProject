@@ -1,7 +1,8 @@
+from dynamic_object import DynamicObject
 from processing_core import ProcessingCore
 
 
-class ProcessingServer:
+class ProcessingServer(DynamicObject):
     def __init__(self, clock, service_rate, pc_rates):
         self.clock = clock  # TODO(remove clock)
         self.service_rate = service_rate

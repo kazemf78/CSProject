@@ -1,8 +1,9 @@
 from clock import Clock
+from dynamic_object import DynamicObject
 from task import Task
 
 
-class ProcessingCore:
+class ProcessingCore(DynamicObject):
     def __init__(self, service_rate, clock):
         self.service_rate = service_rate
         self.clock: Clock = clock

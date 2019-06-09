@@ -1,4 +1,7 @@
-class TimingServer:
+from dynamic_object import DynamicObject
+
+
+class TimingServer(DynamicObject):
     def __init__(self, clock, timing_rate, servers_rates_matrix):
         self.rate = timing_rate
         self.clock = clock
