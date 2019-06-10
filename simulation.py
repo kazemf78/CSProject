@@ -10,10 +10,14 @@ arrival_rate = float(arrival_rate)
 alpha = float(alpha)
 mu = float(mu)
 
+timer_queue = [[], []]
+cores_queue = []
+
 cores = []
 
 for i in range(M):
     cores.append([])
+    cores_queue.append([[], []])
     temp = file.readline()[:-1].split(" ")
     temp2 = temp[1:]
     for j in range(int(temp[0])):
@@ -57,7 +61,8 @@ def remove_min():
     elif events[1][0] == -1:
         inter_time = get_exp_sample(mu)
     else:
-        inter_time = get_exp_sample(cores[events[1][0]][events[1][1]])
+        print(events)
+        inter_time = get_exp_sample(cores[ret[1][0]][ret[1][1]])
     events.append([ret[0] + inter_time, ret[1]])
     BU(len(events) - 1)
     return ret
@@ -78,3 +83,31 @@ for i in range(M):
 for i in range(len(events) - 1, 0, -1):
     BD(i)
 
+
+def arrive(event):
+    if event[1][0] == -2:
+        dead_line = get_exp_sample(1 / alpha)
+        if np.random.randint(0, 10) > 0:
+            timer_queue[1].append(event[0] + dead_line)
+        else:
+            timer_queue[0].append(event[0] + dead_line)
+
+
+def timer_pass(event):
+    pass
+
+
+def core_clock(event):
+    pass
+
+
+served_users = 0
+limit = 50000000
+while served_users < 50000000:
+    e = remove_min()
+    if e[1][0] == -2:
+        arrive(e)
+    elif e[1][0] == -1:
+        timer_pass(e)
+    else:
+        core_clock(e)
