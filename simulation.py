@@ -48,6 +48,11 @@ def get_min():
     return events[1]
 
 
+def add_event(event):
+    events.append(event)
+    BU(len(events) - 1)
+    
+
 def arrive(event):
     if event[1][0] == -2:
         dead_line = get_exp_sample(1 / alpha)
@@ -84,7 +89,7 @@ def handle_expired_tasks(time):
                 j += 1
     expired_tasks = sorted(expired_tasks, key=lambda tup: tup[2])
     # print(timer_queue)
-    timer_idx= [0, 0]
+    timer_idx = [0, 0]
     server_idxs = [[[0, 0]] * M]
     # print(server_idxs)
     for i in range(len(expired_tasks)):
