@@ -33,14 +33,13 @@ def remove_min():
     events[1], events[-1] = events[-1], events[1]
     events.pop()
     BD(1)
+    inter_time = -1.0
     if events[1][0] == -2:
         inter_time = get_exp_sample(arrival_rate)
     elif events[1][0] == -1:
         inter_time = get_exp_sample(mu)
-    else:
-        inter_time = get_exp_sample(cores[ret[1][0]][ret[1][1]])
-    events.append([ret[0] + inter_time, ret[1]])
-    BU(len(events) - 1)
+    if inter_time > 0:
+        add_event([ret[0] + inter_time, ret[1]])
     return ret
 
 
@@ -51,7 +50,7 @@ def get_min():
 def add_event(event):
     events.append(event)
     BU(len(events) - 1)
-    
+
 
 def arrive(event):
     if event[1][0] == -2:
