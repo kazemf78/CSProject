@@ -87,11 +87,14 @@ def timer_pass():
         execute(idx)
 
 
-
-
-
 def core_clock(event):
-    pass
+    core_is_busy[event[1][0]][event[1][1]] = False
+    if len(cores_queue[event[1][0]][0]) > 0:
+        cores_queue[event[1][0]][0].pop(0)
+        execute(event[1][0])
+    elif len(cores_queue[event[1][0]][1]) > 0:
+        cores_queue[event[1][0]][1].pop(0)
+        execute(event[1][0])
 
 
 def handle_expired_tasks(time):
