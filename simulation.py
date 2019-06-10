@@ -61,8 +61,33 @@ def arrive(event):
             timer_queue[0].append(event[0] + dead_line)
 
 
-def timer_pass(event):
+def execute(server_idx):
     pass
+
+
+def server_actual_queue_length(queues, cores_num):
+    return len(queues[0]) + len(queues[1]) - cores_num
+
+
+def timer_pass():
+    server_queues_length = [server_actual_queue_length(cores_queue[i], len(cores[i])) for i in range(len(cores_queue))]
+    min_length = min(server_queues_length)
+    tmp_idxs = list()
+    if min_length >= 0:
+        for i in range(len(server_queues_length)):
+            if min_length == server_queues_length[i]:
+                tmp_idxs.append(i)
+    else:
+        for i in range(len(server_queues_length)):
+            if server_queues_length[i] < 0:
+                tmp_idxs.append(i)
+    rand_num = np.random.randint(0, len(tmp_idxs))
+    idx = tmp_idxs[rand_num]
+    if server_actual_queue_length(cores_queue[idx], len(cores[idx])) < 0:
+        execute(idx)
+
+
+
 
 
 def core_clock(event):
@@ -111,6 +136,7 @@ if __name__ == '__main__':
     cores_queue = []
 
     cores = []
+    core_is_busy = []
 
     # quality properties
     service_time = []
@@ -129,9 +155,11 @@ if __name__ == '__main__':
 
     for i in range(M):
         cores.append([])
+        core_is_busy.append([])
         cores_queue.append([[], []])
         temp = file.readline()[:-1].split(" ")
         temp2 = temp[1:]
+        core_is_busy[i] = [False] * int(temp[0])
         for j in range(int(temp[0])):
             cores[i].append(float(temp2[j]))
 
