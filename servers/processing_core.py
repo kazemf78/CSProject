@@ -1,5 +1,5 @@
-from time.clock import Clock
-from time.dynamic_object import DynamicObject
+from time_.clock import Clock
+from time_.dynamic_object import DynamicObject
 from task.task import Task
 
 

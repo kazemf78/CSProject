@@ -1,12 +1,12 @@
-from time.dynamic_object import DynamicObject
-
+from time_.dynamic_object import DynamicObject
+from collections import deque
 
 class TimingServer(DynamicObject):
     def __init__(self, clock, timing_rate, servers_rates_matrix):
         self.rate = timing_rate
         self.clock = clock
         self.time_to_allocate = 0
-        self.tasks = list()
+        self.tasks = deque()
         self.servers = list()
         self.selected_server = None
         # TODO(initialize servers)

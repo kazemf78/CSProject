@@ -1,12 +1,13 @@
-from time.dynamic_object import DynamicObject
+from time_.dynamic_object import DynamicObject
 from servers.processing_core import ProcessingCore
+from collections import deque
 
 
 class ProcessingServer(DynamicObject):
     def __init__(self, clock, service_rate, pc_rates):
         self.clock = clock  # TODO(remove clock)
         self.service_rate = service_rate
-        self.queue = None  # TODO(appropriate implementation)
+        self.queue = deque()  # TODO(appropriate implementation)
         self.cores = list()
         for rate in pc_rates:
             self.cores.append(ProcessingCore(rate, clock))

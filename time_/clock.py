@@ -1,4 +1,4 @@
-from time.dynamic_object import DynamicObject
+from time_.dynamic_object import DynamicObject
 
 
 class Clock:
