@@ -49,7 +49,7 @@ def get_min():
 
 def add_event(event):
     events.append(event)
-    BU(len(events))  # todo check if it's true (because events list starts from 1)
+    BU(len(events) - 1) 
 
 
 def arrive(event):
@@ -66,7 +66,7 @@ def execute(now, server_idx):
     for i in range(len(cores[server_idx])):
         if not core_is_busy[server_idx][i]:
             serve_time = get_exp_sample(cores[server_idx][i])
-            events.append([now + serve_time, [server_idx, i]])
+            add_event([now + serve_time, [server_idx, i]])
             return
 
 
@@ -102,10 +102,10 @@ def core_clock(event):
     core_is_busy[event[1][0]][event[1][1]] = False
     if len(cores_queue[event[1][0]][0]) > 0:
         cores_queue[event[1][0]][0].pop(0)
-        execute(event[1][0])
+        execute(event[0], event[1][0])
     elif len(cores_queue[event[1][0]][1]) > 0:
         cores_queue[event[1][0]][1].pop(0)
-        execute(event[1][0])
+        execute(event[0], event[1][0])
 
 
 def handle_expired_tasks(time):
