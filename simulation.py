@@ -1,43 +1,5 @@
 import numpy as np
 
-print(np.random.exponential())
-
-file = open('config.txt', 'r')
-
-M, arrival_rate, alpha, mu = file.readline()[:-1].split(" ")
-M = int(M)
-arrival_rate = float(arrival_rate)
-alpha = float(alpha)
-mu = float(mu)
-
-timer_queue = [[], []]
-cores_queue = []
-
-cores = []
-
-# quality properties
-service_time = []
-queue_time = []
-num_of_expired_tasks = []
-average_timer_queue_len = 0
-average_servers_queue_len = [0] * M
-task_needed_service_time = 0
-task_needed_queue_time = 0
-task_needed_expired_average = 0
-task_needed_average_timer_queue_len = 0
-task_needed_average_servers_queue_len = [0] * M
-served_users = 0
-intered_users = 0
-limit = 50000000
-
-for i in range(M):
-    cores.append([])
-    cores_queue.append([[], []])
-    temp = file.readline()[:-1].split(" ")
-    temp2 = temp[1:]
-    for j in range(int(temp[0])):
-        cores[i].append(float(temp2[j]))
-
 
 def get_exp_sample(rate):
     assert rate != 0.0
@@ -76,7 +38,6 @@ def remove_min():
     elif events[1][0] == -1:
         inter_time = get_exp_sample(mu)
     else:
-        print(events)
         inter_time = get_exp_sample(cores[ret[1][0]][ret[1][1]])
     events.append([ret[0] + inter_time, ret[1]])
     BU(len(events) - 1)
@@ -85,18 +46,6 @@ def remove_min():
 
 def get_min():
     return events[1]
-
-
-events = [[0, [-3, 0]]]
-events.append([get_exp_sample(arrival_rate), [-2, 0]])  # arrival event specified by -2
-events.append([get_exp_sample(mu), [-1, 0]])  # timer job specified by -1
-for i in range(M):
-    for j in range(len(cores[i])):
-        events.append([get_exp_sample(cores[i][j]), [i, j]])
-
-# make heap
-for i in range(len(events) - 1, 0, -1):
-    BD(i)
 
 
 def arrive(event):
@@ -116,11 +65,72 @@ def core_clock(event):
     pass
 
 
-while served_users < 50000000:
-    e = remove_min()
-    if e[1][0] == -2:
-        arrive(e)
-    elif e[1][0] == -1:
-        timer_pass(e)
-    else:
-        core_clock(e)
+def handle_expired_tasks(time):
+    pass
+    # for i in range(2):
+    #     j = 0
+    #     while j < len(timer_queue[i]):
+    #         if timer_queue[i][j] < time:
+    #             timer_queue[i].pop(j)
+    #             j -= 1
+    #         j += 1
+    #     for k in range(M):
+    #         j = 0
+    #         while j < len(cores_queue[k][i]):
+    #             if cores_queue[k][i][j] < time:
+
+
+if __name__ == '__main__':
+    file = open('config.txt', 'r')
+
+    M, arrival_rate, alpha, mu = file.readline()[:-1].split(" ")
+    M = int(M)
+    arrival_rate = float(arrival_rate)
+    alpha = float(alpha)
+    mu = float(mu)
+
+    timer_queue = [[], []]
+    cores_queue = []
+
+    cores = []
+
+    # quality properties
+    service_time = []
+    queue_time = []
+    num_of_expired_tasks = []
+    average_timer_queue_len = 0
+    average_servers_queue_len = [0] * M
+    task_needed_service_time = 0
+    task_needed_queue_time = 0
+    task_needed_expired_average = 0
+    task_needed_average_timer_queue_len = 0
+    task_needed_average_servers_queue_len = [0] * M
+    served_users = 0
+    intered_users = 0
+    limit = 50000000
+
+    for i in range(M):
+        cores.append([])
+        cores_queue.append([[], []])
+        temp = file.readline()[:-1].split(" ")
+        temp2 = temp[1:]
+        for j in range(int(temp[0])):
+            cores[i].append(float(temp2[j]))
+
+    events = [[0, [-3, 0]]]
+    events.append([get_exp_sample(arrival_rate), [-2, 0]])  # arrival event specified by -2
+    events.append([get_exp_sample(mu), [-1, 0]])  # timer job specified by -1
+
+    # make heap
+    for i in range(len(events) - 1, 0, -1):
+        BD(i)
+
+    while served_users < 50000000:
+        e = remove_min()
+        handle_expired_tasks(e[0])
+        if e[1][0] == -2:
+            arrive(e)
+        elif e[1][0] == -1:
+            timer_pass(e)
+        else:
+            core_clock(e)
