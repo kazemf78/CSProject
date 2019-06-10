@@ -66,18 +66,35 @@ def core_clock(event):
 
 
 def handle_expired_tasks(time):
-    pass
-    # for i in range(2):
-    #     j = 0
-    #     while j < len(timer_queue[i]):
-    #         if timer_queue[i][j] < time:
-    #             timer_queue[i].pop(j)
-    #             j -= 1
-    #         j += 1
-    #     for k in range(M):
-    #         j = 0
-    #         while j < len(cores_queue[k][i]):
-    #             if cores_queue[k][i][j] < time:
+    expired_tasks = []
+    for i in range(2):
+        j = 0
+        while j < len(timer_queue[i]):
+            if timer_queue[i][j] < time:
+                expired_tasks.append([-1, i, j])
+            j += 1
+        for k in range(M):
+            if i == 0:
+                j = len(cores[k])
+            else:
+                j = max(len(cores[k]) - len(cores_queue[k][0]), 0)
+            while j < len(cores_queue[k][i]):
+                if cores_queue[k][i][j] < time:
+                    expired_tasks.append([k, i, j])
+                j += 1
+    expired_tasks = sorted(expired_tasks, key=lambda tup: tup[2])
+    # print(timer_queue)
+    timer_idx= [0, 0]
+    server_idxs = [[[0, 0]] * M]
+    # print(server_idxs)
+    for i in range(len(expired_tasks)):
+        if expired_tasks[i][0] == -1:
+            timer_queue[expired_tasks[i][1]].pop(expired_tasks[i][2] - timer_idx[expired_tasks[i][1]])
+            timer_idx[expired_tasks[i][1]] += 1
+        else:
+            cores_queue[expired_tasks[i][0]][expired_tasks[i][1]].remove(
+                expired_tasks[i][2] - server_idxs[expired_tasks[i][0]][expired_tasks[i][1]])
+            server_idxs[expired_tasks[i][0]][expired_tasks[i][1]] += 1
 
 
 if __name__ == '__main__':
