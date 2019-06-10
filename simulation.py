@@ -34,11 +34,11 @@ def remove_min():
     events.pop()
     BD(1)
     inter_time = -1.0
-    if events[1][0] == -2:
+    if events[1][1][0] == -2:
         inter_time = get_exp_sample(arrival_rate)
-    elif events[1][0] == -1:
+    elif events[1][1][0] == -1:
         inter_time = get_exp_sample(mu)
-    if inter_time > 0:
+    if inter_time >= 0.0:
         add_event([ret[0] + inter_time, ret[1]])
     return ret
 
@@ -99,7 +99,13 @@ def timer_pass(event):
 
 
 def core_clock(event):
-    pass
+    core_is_busy[event[1][0]][event[1][1]] = False
+    if len(cores_queue[event[1][0]][0]) > 0:
+        cores_queue[event[1][0]][0].pop(0)
+        execute(event[1][0])
+    elif len(cores_queue[event[1][0]][1]) > 0:
+        cores_queue[event[1][0]][1].pop(0)
+        execute(event[1][0])
 
 
 def handle_expired_tasks(time):
@@ -111,10 +117,7 @@ def handle_expired_tasks(time):
                 expired_tasks.append([-1, i, j])
             j += 1
         for k in range(M):
-            if i == 0:
-                j = len(cores[k])
-            else:
-                j = max(len(cores[k]) - len(cores_queue[k][0]), 0)
+            j = 0
             while j < len(cores_queue[k][i]):
                 if cores_queue[k][i][j] < time:
                     expired_tasks.append([k, i, j])
@@ -177,8 +180,6 @@ if __name__ == '__main__':
     events = [[0, [-3, 0]]]
     events.append([get_exp_sample(arrival_rate), [-2, 0]])  # arrival event specified by -2
     events.append([get_exp_sample(mu), [-1, 0]])  # timer job specified by -1
-    # todo I think the above code is wrong because the inter arrival times should be
-    # in form of exponential not the arrival times
 
     # make heap
     for i in range(len(events) - 1, 0, -1):
