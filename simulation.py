@@ -49,7 +49,7 @@ def get_min():
 
 def add_event(event):
     events.append(event)
-    BU(len(events) - 1)
+    BU(len(events))  # todo check if it's true (because events list starts from 1)
 
 
 def arrive(event):
@@ -61,33 +61,41 @@ def arrive(event):
             timer_queue[0].append(event[0] + dead_line)
 
 
-def execute(server_idx):
-    pass
+def execute(now, server_idx):
+    # it's guaranteed that there is an event to be added to a core of this server
+    for i in range(len(cores[server_idx])):
+        if not core_is_busy[server_idx][i]:
+            serve_time = get_exp_sample(cores[server_idx][i])
+            events.append([now + serve_time, [server_idx, i]])
+            return
 
 
-def server_actual_queue_length(queues, cores_num):
-    return len(queues[0]) + len(queues[1]) - cores_num
+def server_queue_length(queues):
+    return len(queues[0]) + len(queues[1])
 
 
-def timer_pass():
-    server_queues_length = [server_actual_queue_length(cores_queue[i], len(cores[i])) for i in range(len(cores_queue))]
-    min_length = min(server_queues_length)
+def timer_pass(event):
+    queues_length = list(map(server_queue_length, cores_queue))
+    min_length = min(queues_length)
     tmp_idxs = list()
-    if min_length >= 0:
-        for i in range(len(server_queues_length)):
-            if min_length == server_queues_length[i]:
-                tmp_idxs.append(i)
-    else:
-        for i in range(len(server_queues_length)):
-            if server_queues_length[i] < 0:
-                tmp_idxs.append(i)
+    for i in range(len(queues_length)):
+        if min_length == queues_length[i]:
+            tmp_idxs.append(i)
     rand_num = np.random.randint(0, len(tmp_idxs))
     idx = tmp_idxs[rand_num]
-    if server_actual_queue_length(cores_queue[idx], len(cores[idx])) < 0:
-        execute(idx)
-
-
-
+    if server_queue_length(cores_queue[idx]) == 0:
+        for is_busy in core_is_busy[idx]:
+            if not is_busy:
+                execute(event[0], idx)
+                return
+    if len(timer_queue[0]) == 0 and len(timer_queue[1]) == 0:
+        return
+    if len(timer_queue[0]):
+        res = timer_queue[0].pop(0)
+        cores_queue[idx][0].append(res)
+    else:
+        res = timer_queue[1].pop(0)
+        cores_queue[idx][1].append(res)
 
 
 def core_clock(event):
@@ -169,6 +177,8 @@ if __name__ == '__main__':
     events = [[0, [-3, 0]]]
     events.append([get_exp_sample(arrival_rate), [-2, 0]])  # arrival event specified by -2
     events.append([get_exp_sample(mu), [-1, 0]])  # timer job specified by -1
+    # todo I think the above code is wrong because the inter arrival times should be
+    # in form of exponential not the arrival times
 
     # make heap
     for i in range(len(events) - 1, 0, -1):
