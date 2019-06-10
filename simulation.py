@@ -15,6 +15,21 @@ cores_queue = []
 
 cores = []
 
+# quality properties
+service_time = []
+queue_time = []
+num_of_expired_tasks = []
+average_timer_queue_len = 0
+average_servers_queue_len = [0] * M
+task_needed_service_time = 0
+task_needed_queue_time = 0
+task_needed_expired_average = 0
+task_needed_average_timer_queue_len = 0
+task_needed_average_servers_queue_len = [0] * M
+served_users = 0
+intered_users = 0
+limit = 50000000
+
 for i in range(M):
     cores.append([])
     cores_queue.append([[], []])
@@ -101,8 +116,6 @@ def core_clock(event):
     pass
 
 
-served_users = 0
-limit = 50000000
 while served_users < 50000000:
     e = remove_min()
     if e[1][0] == -2:
