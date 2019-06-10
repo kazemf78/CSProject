@@ -34,11 +34,11 @@ def remove_min():
     events.pop()
     BD(1)
     inter_time = -1.0
-    if events[1][0] == -2:
+    if events[1][1][0] == -2:
         inter_time = get_exp_sample(arrival_rate)
-    elif events[1][0] == -1:
+    elif events[1][1][0] == -1:
         inter_time = get_exp_sample(mu)
-    if inter_time > 0:
+    if inter_time >= 0.0:
         add_event([ret[0] + inter_time, ret[1]])
     return ret
 
@@ -78,10 +78,7 @@ def handle_expired_tasks(time):
                 expired_tasks.append([-1, i, j])
             j += 1
         for k in range(M):
-            if i == 0:
-                j = len(cores[k])
-            else:
-                j = max(len(cores[k]) - len(cores_queue[k][0]), 0)
+            j = 0
             while j < len(cores_queue[k][i]):
                 if cores_queue[k][i][j] < time:
                     expired_tasks.append([k, i, j])
