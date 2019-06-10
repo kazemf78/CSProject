@@ -61,11 +61,12 @@ def arrive(event):
             timer_queue[0].append(event[0] + dead_line)
 
 
-def execute(now, server_idx):
+def execute(arrive_time, now, server_idx):
     # it's guaranteed that there is an event to be added to a core of this server
     for i in range(len(cores[server_idx])):
         if not core_is_busy[server_idx][i]:
             serve_time = get_exp_sample(cores[server_idx][i])
+            core_task_arrive_time[server_idx][i] = arrive_time
             add_event([now + serve_time, [server_idx, i]])
             return
 
@@ -151,6 +152,7 @@ if __name__ == '__main__':
 
     cores = []
     core_is_busy = []
+    core_task_arrive_time = []
 
     # quality properties
     service_time = []
@@ -170,10 +172,12 @@ if __name__ == '__main__':
     for i in range(M):
         cores.append([])
         core_is_busy.append([])
+        core_task_arrive_time.append([])
         cores_queue.append([[], []])
         temp = file.readline()[:-1].split(" ")
         temp2 = temp[1:]
         core_is_busy[i] = [False] * int(temp[0])
+        core_task_arrive_time.append = [-1] * int(temp[0])
         for j in range(int(temp[0])):
             cores[i].append(float(temp2[j]))
 
