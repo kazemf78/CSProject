@@ -34,9 +34,9 @@ def remove_min():
     events.pop()
     BD(1)
     inter_time = -1.0
-    if events[1][1][0] == -2:
+    if ret[1][0] == -2:
         inter_time = get_exp_sample(arrival_rate)
-    elif events[1][1][0] == -1:
+    elif ret[1][0] == -1:
         inter_time = get_exp_sample(mu)
     if inter_time >= 0.0:
         add_event([ret[0] + inter_time, ret[1]])
@@ -49,16 +49,16 @@ def get_min():
 
 def add_event(event):
     events.append(event)
-    BU(len(events) - 1) 
+    BU(len(events) - 1)
 
 
 def arrive(event):
     if event[1][0] == -2:
         dead_line = get_exp_sample(1 / alpha)
         if np.random.randint(0, 10) > 0:
-            timer_queue[1].append(event[0] + dead_line)
+            timer_queue[1].append([event[0] + dead_line, event[0]])
         else:
-            timer_queue[0].append(event[0] + dead_line)
+            timer_queue[0].append([event[0] + dead_line, event[0]])
 
 
 def execute(now, server_idx):
@@ -113,7 +113,7 @@ def handle_expired_tasks(time):
     for i in range(2):
         j = 0
         while j < len(timer_queue[i]):
-            if timer_queue[i][j] < time:
+            if timer_queue[i][j][0] < time:
                 expired_tasks.append([-1, i, j])
             j += 1
         for k in range(M):
