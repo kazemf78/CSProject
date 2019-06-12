@@ -270,7 +270,8 @@ def handle_expired_tasks(time):
 
 
 if __name__ == '__main__':
-    file = open('config.txt', 'r')
+    print("in simulation file")
+    file = open('gui_config.txt', 'r')
     M, arrival_rate, alpha, mu = file.readline()[:-1].split(" ")
     M = int(M)
     arrival_rate = float(arrival_rate)
